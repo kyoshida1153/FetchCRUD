@@ -1,6 +1,0 @@
-{
-  "watch": {
-    "path": "db.json",
-    "middleware": "middleware.js"
-  }
-}
