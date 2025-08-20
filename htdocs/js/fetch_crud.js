@@ -3,9 +3,15 @@ const postBtn = document.querySelector('.postBtn');
 const ikkulist = document.querySelector('.ikkuList');
 const url = 'http://localhost:3000/ikku';
 
+/* ###################################################################### */
 
 // Create
-const createFetch = () => {
+
+document.addEventListener('DOMContentLoaded', () => {
+  postBtn.addEventListener('click', createFetch, false);
+});
+
+function createFetch() {
   const data = {
     ikku: postIkku.value
   };
@@ -27,13 +33,17 @@ const createFetch = () => {
   }).catch((error) => {
     console.log(error);
   });
-};
+}
 
-postBtn.addEventListener('click', createFetch, false);
-
+/* ###################################################################### */
 
 // Read
-const readFetch = () => {
+
+document.addEventListener('DOMContentLoaded', () => {
+  readFetch();
+});
+
+function readFetch() {
   fetch(url).then((response) => {
     if (!response.ok) {
       console.log('Read error!');
@@ -49,13 +59,23 @@ const readFetch = () => {
   }).catch((error) => {
     console.log(error);
   });
-};
+}
 
-readFetch();
-
+/* ###################################################################### */
 
 // Update
-const updateFetch = (thisLi) => {
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('click', (e) => {
+    if (e.target.className !== 'updateBtn') {
+      return;
+    }
+    const thisLi = e.target.closest('li');
+    updateFetch(thisLi);
+  }, false);
+});
+
+function updateFetch(thisLi) {
   const thisId = thisLi.dataset.id;
   const updateUrl = url + '/' + thisId;
   const updateArea = thisLi.querySelector('.updateArea');
@@ -78,24 +98,27 @@ const updateFetch = (thisLi) => {
     console.log('Update ok!');
     return response.json();
   }).then((data) => {
-    thisLi.firstChild.textContent = data.ikku;
+    thisLi.querySelector('.ikkuList__ikkuValue').textContent = data.ikku;
     thisLi.removeChild(updateArea);
   }).catch((error) => {
     console.log(error);
   });
-};
+}
 
-document.addEventListener('click', (e) => {
-  if (e.target.className !== 'updateBtn') {
-    return;
-  }
-  const thisLi = e.target.closest('li');
-  updateFetch(thisLi);
-}, false);
-
+/* ###################################################################### */
 
 // Delete
-const deleteFetch = (thisLi) => {
+document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('click', (e) => {
+    if (e.target.className !== 'doDelete') {
+      return;
+    }
+    const thisLi = e.target.closest('li');
+    deleteFetch(thisLi);
+  }, false);
+});
+
+function deleteFetch(thisLi) {
   const thisId = thisLi.dataset.id;
   const updateUrl = url + '/' + thisId;
 
@@ -112,16 +135,9 @@ const deleteFetch = (thisLi) => {
   }).catch((error) => {
     console.log(error);
   });
-};
+}
 
-document.addEventListener('click', (e) => {
-  if (e.target.className !== 'doDelete') {
-    return;
-  }
-  const thisLi = e.target.closest('li');
-  deleteFetch(thisLi);
-}, false);
-
+/* ###################################################################### */
 
 // Append Button
 const appendBtn = (className, text) => {
@@ -131,19 +147,23 @@ const appendBtn = (className, text) => {
   return btn;
 };
 
-
 // Append List
 const appendList = (thisData) => {
   const li = document.createElement('li');
   li.dataset.id = thisData.id;
-  li.innerHTML = thisData.ikku;
+
+  const span = document.createElement('span');
+  span.className = 'ikkuList__ikkuValue'
+  span.innerHTML = thisData.ikku;
+  li.append(span);
+
   const updateBtn = appendBtn('doUpdate', '修正');
-  li.appendChild(updateBtn);
+  li.prepend(updateBtn);
   const deleteBtn = appendBtn('doDelete', '削除');
-  li.appendChild(deleteBtn);
+  li.prepend(deleteBtn);
+
   ikkulist.appendChild(li);
 };
-
 
 // Append Update Area
 const appendUpdateInput = (thisIkku) => {
@@ -166,7 +186,7 @@ const appendUpdateBtn = () => {
 };
 
 const appendUpdateArea = (thisLi) => {
-  const thisIkku = thisLi.firstChild.textContent;
+  const thisIkku = thisLi.querySelector('.ikkuList__ikkuValue').textContent;
   const appendDiv = document.createElement('div');
   appendDiv.className = 'updateArea';
   appendDiv.appendChild(appendUpdateInput(thisIkku));
@@ -174,12 +194,16 @@ const appendUpdateArea = (thisLi) => {
   thisLi.appendChild(appendDiv);
 };
 
-document.addEventListener('click', (e) => {
-  if (e.target.className !== 'doUpdate') {
-    return;
-  }
-  const thisLi = e.target.closest('li');
-  if (thisLi.querySelector('.updateArea') === null) {
-    appendUpdateArea(thisLi);
-  }
-}, false);
+document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('click', (e) => {
+    if (e.target.className !== 'doUpdate') {
+      return;
+    }
+    const thisLi = e.target.closest('li');
+    if (thisLi.querySelector('.updateArea') === null) {
+      appendUpdateArea(thisLi);
+    }
+  }, false);
+});
+
+/* ###################################################################### */
